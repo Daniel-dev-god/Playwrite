@@ -26,10 +26,12 @@ def test_checkout_items(page):
 
 
 class ShoppingCartTest:
-    def __init__(self, page):
+    def __init__(self, page, playwright):
         self.page = page
-        self.backpack_add = self.page.locator("[data-test=\"add-to-cart-sauce-labs-backpack\"]")
+        self.playwright = playwright
+        playwright.selectors.set_test_id_attribute("data-test")
         self.bike_light_add = self.page.locator("[data-test=\"add-to-cart-sauce-labs-bike-light\"]")
+        self.backpack_add = self.page.get_by_test_id("add-to-cart-sauce-labs-backpack")
         self.fleece_jacket_add = self.page.locator("[data-test=\"add-to-cart-sauce-labs-fleece-jacket\"]")
         self.bolt_tshirt_add = self.page.locator("[data-test=\"add-to-cart-sauce-labs-bolt-t-shirt\"]")
         self.onesie_add = self.page.locator("[data-test=\"add-to-cart-sauce-labs-onesie\"]")
@@ -46,14 +48,15 @@ class ShoppingCartTest:
         self.shipping_name = self.page.locator("[data-test=\"firstName\"]")
         self.shipping_lastname = self.page.locator("[data-test=\"lastName\"]")
         self.shipping_postcode = self.page.locator("[data-test=\"postalCode\"]")
-        self.confirm_order = self.page.locator("[data-test=\"finish\"]")
+        self.confirm_order = self.page.locator("[data-test=\"continue\"]")
+        self.finish_order = self.page.locator("[data-test=\"finish\"]")
         self.cancel_order = self.page.locator("[data-test=\"cancel\"]")
         self.back_home = self.page.locator("[data-test=\"back-to-products\"]")
 
     def add_all_items_to_cart(self):
         # adds ALL items available in shop to cart
-        self.backpack_add().click()
         self.bike_light_add.click()
+        self.backpack_add.click()
         self.fleece_jacket_add.click()
         self.bolt_tshirt_add.click()
         self.onesie_add.click()
@@ -61,7 +64,7 @@ class ShoppingCartTest:
 
     def remove_all_items_to_cart(self):
         # removes ALL items available in shop to cart
-        self.backpack_remove().click()
+        self.backpack_remove.click()
         self.bike_light_remove.click()
         self.fleece_jacket_remove.click()
         self.bolt_tshirt_remove.click()
@@ -69,22 +72,20 @@ class ShoppingCartTest:
         self.red_tshirt_remove.click()
 
     def checkout(self):
-        self.shopping_cart().click()
-        self.checkout_button().click()
+        self.shopping_cart.click()
+        self.checkout_button.click()
 
-    def fill_shipping_info(self, firstname: str, lastname: str, postalcode: int):
+    def fill_shipping_info(self, firstname: str, lastname: str, postalcode: str):
         self.shipping_name.fill(firstname)
         self.shipping_lastname.fill(lastname)
         self.shipping_postcode.fill(postalcode)
 
-    def finalize_order(self, complete_order: bool):
-        if complete_order:
-            self.confirm_order.click()
-        else:
-            self.cancel_order.click()
+    def finalize_order(self):
+        self.confirm_order.click()
+        self.finish_order.click()
+
+    def cancel_order(self):
+        self.cancel_order.click()
 
     def navigate_back_to_products(self):
         self.back_home.click()
-
-
-
